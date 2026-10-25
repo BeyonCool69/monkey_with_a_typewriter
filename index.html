@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Monkey and the Typewriter</title>
+<meta name="description" content="One monkey, one typewriter, and everyone watching the same keystrokes. Typed live from a public randomness beacon.">
+<meta name="theme-color" content="#1d2421">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Monkey and the Typewriter">
+<meta property="og:description" content="One monkey, one typewriter, everyone watching the same keystrokes. Typed live from a public randomness beacon.">
+<meta property="og:image" content="https://BeyonCool69.github.io/monkey_with_a_typewriter/og-image.png">
+<meta property="og:url" content="https://BeyonCool69.github.io/monkey_with_a_typewriter/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Monkey and the Typewriter">
+<meta name="twitter:description" content="One monkey, one typewriter, everyone watching the same keystrokes.">
+<meta name="twitter:image" content="https://BeyonCool69.github.io/monkey_with_a_typewriter/og-image.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='20' cy='48' r='11' fill='%238a5a3b'/><circle cx='80' cy='48' r='11' fill='%238a5a3b'/><circle cx='50' cy='52' r='32' fill='%238a5a3b'/><ellipse cx='50' cy='60' rx='21' ry='17' fill='%23e6c39b'/><circle cx='40' cy='50' r='4.5' fill='%23222'/><circle cx='60' cy='50' r='4.5' fill='%23222'/></svg>">
+<style>
+:root{
+  --bg:#1d2421; --paper:#e9e4d3; --ink:#222; --mark:#f2c14e; --side:#26302c; --text:#d7ddd5; --dim:#8c9a92; --line:#3a4640;
+}
+@media (prefers-color-scheme: light){
+  :root{ --bg:#c9d3c4; --side:#dfe6db; --text:#1f2a24; --dim:#46544b; --line:#aab8a8; }
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.5 Georgia,"Times New Roman",serif;display:flex;flex-direction:column;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+header{padding:16px 24px 8px}
+h1{margin:0;font-size:1.5rem;font-weight:700;letter-spacing:.01em}
+#sub{margin:2px 0 0;color:var(--dim);font-size:.95rem}
+main{flex:1;min-height:0;display:grid;grid-template-columns:1fr 300px;gap:16px;padding:8px 24px 16px}
+#paperwrap{position:relative;min-height:0;display:flex}
+#paper{flex:1;overflow-y:auto;background:var(--paper);color:var(--ink);border-radius:3px;padding:20px 24px;box-shadow:0 2px 0 #0004;font:17px/1.65 "Courier New",Courier,monospace}
+#paper h3{margin:18px 0 6px;font:700 .8rem "Courier New",monospace;color:#5f5a4b;border-bottom:1px dashed #aaa;padding-bottom:4px}
+#paper h3:first-child{margin-top:0}
+.text{margin:0;word-break:break-word;white-space:pre-wrap}
+mark{background:var(--mark);color:#000;padding:0 2px;border-radius:2px}
+.caret{display:inline-block;width:.6ch;height:1.1em;background:#222;vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.caret{animation:none}}
+#live{position:absolute;right:20px;bottom:16px;display:none;background:#222;color:#fff;border:0;border-radius:20px;padding:8px 14px;font:inherit;font-size:.9rem;cursor:pointer}
+#live:focus-visible,#paper:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+aside{min-height:0;display:flex;flex-direction:column;background:var(--side);border:1px solid var(--line);border-radius:3px;padding:14px 16px}
+aside h2{margin:0 0 4px;font-size:1.1rem}
+#stats{margin:0 0 10px;color:var(--dim);font-size:.9rem}
+#words{list-style:none;margin:0;padding:0;overflow-y:auto;flex:1;font:16px/1.7 "Courier New",monospace}
+#words li{border-top:1px solid var(--line);padding:1px 0}
+#words li small{color:var(--dim);margin-left:.5ch}
+#words li.record{font-weight:700}
+footer{padding:0 24px 14px;color:var(--dim);font-size:.85rem}
+#status{color:var(--mark)}
+@media (max-width:760px){
+  main{grid-template-columns:1fr;grid-template-rows:5fr 2fr;padding:8px 12px 12px}
+  header{padding:12px 12px 4px}footer{padding:0 12px 10px}
+}
+#left{min-height:0;display:flex;flex-direction:column;gap:8px}
+#left #paperwrap{flex:1}
+#search{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#q{flex:1;min-width:140px;padding:7px 10px;border-radius:3px;border:1px solid var(--line);background:var(--side);color:var(--text);font:inherit}
+#search button{padding:7px 12px;border-radius:3px;border:1px solid var(--line);background:var(--side);color:var(--text);font:inherit;cursor:pointer}
+#search :focus-visible{outline:2px solid var(--mark)}
+#found:empty{display:none}
+#found{flex-basis:100%;font-size:.85rem;color:var(--dim);min-height:1.2em}
+::highlight(find){background:#ff7a3d;color:#000}
+#words button{all:unset;cursor:pointer}
+#words button:hover{text-decoration:underline}
+#words button:focus-visible{outline:2px solid var(--mark)}
+#tip{position:fixed;display:none;z-index:20;max-width:270px;background:#111;color:#f4f4f4;padding:6px 10px;border-radius:4px;font:13px/1.4 Georgia,serif;pointer-events:none;box-shadow:0 2px 8px #0006;word-break:break-all}
+header{position:relative;padding-right:96px}
+#aboutBtn{position:absolute;right:24px;top:16px;padding:6px 14px;border-radius:3px;border:1px solid var(--line);background:var(--side);color:var(--text);font:inherit;font-size:.9rem;cursor:pointer}
+#aboutBtn:focus-visible,#aboutClose:focus-visible{outline:2px solid var(--mark)}
+@media (max-width:760px){#aboutBtn{right:12px;top:10px}}
+#about{max-width:560px;width:calc(100% - 32px);max-height:85vh;overflow-y:auto;border:1px solid var(--line);border-radius:6px;background:var(--side);color:var(--text);padding:20px 24px}
+#about::backdrop{background:#000a}
+#about h2{margin:0 0 8px;font-size:1.25rem}
+#about h3{margin:16px 0 2px;font-size:1rem}
+#about p{margin:0;line-height:1.55}
+#about a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+#aboutClose{margin-top:18px;padding:7px 16px;border-radius:3px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;cursor:pointer}
+h1{display:flex;align-items:center;gap:14px}
+.monkey{flex:none;overflow:visible}
+.m-fur{fill:#8a5a3b}.m-face{fill:#e6c39b}.m-ink{fill:#1d1f1e}.m-key{fill:#e9e4d3}
+.m-body{fill:#3d4a43;stroke:#6b7a71;stroke-width:1}
+.m-arm{stroke:#8a5a3b;stroke-width:6;stroke-linecap:round}
+::selection{background:var(--mark);color:#000}
+#paper{scrollbar-color:#9a947f var(--paper)}
+#words{scrollbar-color:var(--line) transparent}
+#q{caret-color:var(--mark)}
+#q::placeholder{color:var(--dim);opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <button id="aboutBtn" type="button">About</button>
+  <h1><svg class="monkey" viewBox="0 0 96 72" width="64" height="48" aria-hidden="true" focusable="false">
+    <rect x="34" y="36" width="28" height="14" rx="1.5" class="m-key"/>
+    <rect x="8" y="46" width="80" height="22" rx="4" class="m-body"/>
+    <g class="m-key"><circle cx="20" cy="54" r="2.4"/><circle cx="29" cy="54" r="2.4"/><circle cx="38" cy="54" r="2.4"/><circle cx="47" cy="54" r="2.4"/><circle cx="56" cy="54" r="2.4"/><circle cx="65" cy="54" r="2.4"/><circle cx="74" cy="54" r="2.4"/></g>
+    <g id="pawL"><line x1="40" y1="36" x2="31" y2="45" class="m-arm"/><circle cx="31" cy="46" r="5" class="m-fur"/></g>
+    <g id="pawR"><line x1="56" y1="36" x2="65" y2="45" class="m-arm"/><circle cx="65" cy="46" r="5" class="m-fur"/></g>
+    <circle cx="30" cy="22" r="6" class="m-fur"/><circle cx="66" cy="22" r="6" class="m-fur"/>
+    <circle cx="30" cy="22" r="3" class="m-face"/><circle cx="66" cy="22" r="3" class="m-face"/>
+    <circle cx="48" cy="24" r="16" class="m-fur"/>
+    <ellipse cx="48" cy="27" rx="11" ry="9" class="m-face"/>
+    <circle cx="43.5" cy="24" r="1.7" class="m-ink"/><circle cx="52.5" cy="24" r="1.7" class="m-ink"/>
+    <ellipse cx="48" cy="31" rx="5" ry="3.2" class="m-fur"/>
+    <circle cx="46.5" cy="31" r=".8" class="m-ink"/><circle cx="49.5" cy="31" r=".8" class="m-ink"/>
+  </svg>The Monkey and the Typewriter</h1>
+  <p id="sub"><span id="keys">0</span> keystrokes so far. One monkey, typed live from the drand randomness beacon. <span id="status"></span></p>
+</header>
+<main>
+  <div id="left">
+    <form id="search" role="search">
+      <input id="q" type="search" placeholder="Search for letters" aria-label="Search the text" autocomplete="off" spellcheck="false">
+      <button type="submit">Older</button><button type="button" id="newer">Newer</button>
+      <span id="found" role="status"></span>
+    </form>
+  <div id="paperwrap">
+    <div id="paper" tabindex="0" aria-label="Everything the monkey has typed"></div>
+    <button id="live" type="button">Back to live ↓</button>
+  </div>
+  </div>
+  <aside>
+    <h2>Words found</h2>
+    <p id="stats">Nothing yet.</p>
+    <ul id="words" aria-live="off"></ul>
+  </aside>
+</main>
+<footer>The chance of typing “banana” in any given six keystrokes is 1 in 387,420,489. Letters come from drand, a public randomness beacon run by the League of Entropy, and appear only after it publishes them. Scroll up for earlier pages.</footer>
+
+<dialog id="about" aria-labelledby="aboutTitle">
+  <h2 id="aboutTitle">About the monkey</h2>
+  <p>One simulated monkey sits at a typewriter and presses a random key, a to z or the space bar, every 0.3 seconds. Everyone who opens this page sees the same keystrokes at the same moment.</p>
+  <h3>Where the randomness comes from</h3>
+  <p>The letters come from <a href="https://drand.love" target="_blank" rel="noopener">drand</a>, a public randomness beacon run by the League of Entropy (a group of organizations including Cloudflare and Protocol Labs). It publishes a new random value every 3 seconds, and nobody, including the author of this site, can know a value before it is published. Each value becomes 10 letters, which the page types about 3 seconds after publication, so no letter exists anywhere before the monkey types it.</p>
+  <h3>History</h3>
+  <p>A scheduled GitHub job saves finished letters as plain text files, only after they have been typed. They are derived from drand's public records, so anyone can recompute them from the open source code.</p>
+  <h3>Words, search and the timeline</h3>
+  <p>A word is a run of at least 3 letters between two spaces that appears in the ENABLE word list. Click a word in the sidebar to jump to it, use the search box to find any string of letters, and hover over any letters to see how many hours after the monkey started they were typed.</p>
+  <h3>Privacy</h3>
+  <p>This site sets no cookies, runs no tracking and stores nothing in your browser. Your browser does request data from GitHub Pages and from drand's public servers, so those services see your IP address as with any website.</p>
+  <h3>Credits</h3>
+  <p>Randomness: drand / League of Entropy. Word list: ENABLE (public domain). <a href="https://github.com/BeyonCool69/monkey_with_a_typewriter" target="_blank" rel="noopener">Source code</a>.</p>
+  <button id="aboutClose" type="button">Close</button>
+</dialog>
+<div id="tip" role="tooltip"></div>
+<script>
+const MIN_LEN = 3;                       // shortest word that counts (no more 2-letter or single-letter words)
+const CHAIN = '52db9ba70e0cc0f6eaf7803dd07447a1f5477735fd3f661792ba94600c84e971'; // drand quicknet, 3 s rounds
+const HOSTS = ['https://api.drand.sh', 'https://api2.drand.sh', 'https://api3.drand.sh', 'https://drand.cloudflare.com'];
+const ALPHA = 'abcdefghijklmnopqrstuvwxyz      ';
+const PER_ROUND = 10, CHUNK_ROUNDS = 600, CHUNKS_PER_PAGE = 48;
+const CHUNK = CHUNK_ROUNDS * PER_ROUND, PER = CHUNK * CHUNKS_PER_PAGE;   // 6,000 and 288,000 letters
+const GAP_MAX = 1800;                    // newest rounds the page will fetch itself if the archive lags
+
+const $ = s => document.querySelector(s);
+const paper = $('#paper'), liveBtn = $('#live'), wordsEl = $('#words');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const pad = n => String(n).padStart(5, '0');
+
+let GEN, PERIOD, STEP, R0, dict = new Set();
+let liveDay = 0, oldestDay = 0, pageStart = 0, liveText = '', shown = 0, tail = '', doneEl, tailEl;
+let stick = true, loadingOlder = false, noOlder = false, found = 0, longest = '';
+
+const pagesMap = new Map();           // finished pages: n -> { raw, p }
+
+async function drand(path) {
+  for (let a = 0; a < 2; a++) for (const h of HOSTS) {
+    try { const r = await fetch(`${h}/${CHAIN}/${path}`, { signal: AbortSignal.timeout(6000) }); if (r.ok) return await r.json(); } catch {}
+  }
+  return null;
+}
+
+// 32 random bytes per round -> 10 letters, rejection sampling (no bias).
+// If a round ever yields fewer than 10 usable bytes, extend with SHA-256 of the bytes. archive.mjs does the same.
+async function letters(hex) {
+  let bytes = Uint8Array.from(hex.match(/../g), h => parseInt(h, 16)), out = '';
+  while (out.length < PER_ROUND) {
+    for (const b of bytes) if (b < 248 && out.length < PER_ROUND) out += ALPHA[b % 31];
+    if (out.length < PER_ROUND) bytes = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes));
+  }
+  return out;
+}
+async function roundLetters(r) { const j = await drand('public/' + r); return j && j.randomness ? letters(j.randomness) : null; }
+
+async function pool(items, n, fn) {      // run fn over items, n at a time, keep order
+  const out = new Array(items.length); let i = 0;
+  await Promise.all(Array.from({ length: n }, async () => { while (i < items.length) { const k = i++; out[k] = await fn(items[k]); } }));
+  return out;
+}
+async function chunk(g) {
+  try {
+    const r = await fetch(`archive/${pad(Math.floor(g / CHUNKS_PER_PAGE))}/${g % CHUNKS_PER_PAGE}.txt`);
+    return r.ok ? (await r.text()).trim() : null;
+  } catch { return null; }
+}
+
+function render(text, base = 0) {        // base = offset of text[0] within its page
+  const hits = []; let off = 0;
+  const html = text.split(' ').map(t => {
+    const o = off; off += t.length + 1;
+    if (t.length >= MIN_LEN && dict.has(t)) { hits.push({ w: t, off: base + o }); return `<mark>${t}</mark>`; }
+    return t;
+  }).join(' ');
+  return { html, hits };
+}
+function addWords(hits, older, n) {
+  for (const h of (older ? [...hits].reverse() : hits)) {
+    const li = document.createElement('li'), b = document.createElement('button');
+    b.type = 'button'; b.textContent = h.w; b.dataset.n = n; b.dataset.off = h.off;
+    li.append(b);
+    older ? wordsEl.append(li) : wordsEl.prepend(li);
+    found++; if (h.w.length > longest.length) longest = h.w;
+  }
+  $('#stats').textContent = found ? `${found} found. Longest: “${longest}”` : 'Nothing yet.';
+}
+function section(n) {
+  const s = document.createElement('section');
+  const d = new Date(GEN + (R0 + n * PER / PER_ROUND) * PERIOD);
+  s.innerHTML = `<h3>Page ${n + 1}, ${d.toISOString().slice(0, 16).replace('T', ' ')} UTC</h3><p class="text" data-n="${n}"></p>`;
+  return s;
+}
+function mountLive(n) {
+  const s = section(n), p = s.querySelector('p');
+  p.innerHTML = '<span></span><span></span><i class="caret"></i>';
+  [doneEl, tailEl] = p.children;
+  paper.append(s); liveDay = n; pageStart = n * PER;
+}
+const nowIdx = () => {                  // keystrokes typed so far. Round r is typed one round after it is published.
+  const t = Date.now() - GEN, rr = Math.floor(t / PERIOD);
+  return Math.max(0, (rr - R0) * PER_ROUND + Math.floor((t % PERIOD) / STEP) + 1);
+};
+
+async function init() {
+  let meta;
+  while (!(meta = await fetch('archive/meta.json').then(r => r.ok ? r.json() : null).catch(() => null))) {
+    $('#status').textContent = 'Waiting for the first archive run (see setup steps).'; await sleep(15000);
+  }
+  R0 = meta.startRound;
+  let info;
+  while (!(info = await drand('info'))) { $('#status').textContent = 'Reaching the drand beacon…'; await sleep(5000); }
+  GEN = info.genesis_time * 1000; PERIOD = info.period * 1000; STEP = PERIOD / PER_ROUND;
+  dict = new Set((await (await fetch('words.txt')).text()).split(/\s+/).filter(w => w.length >= MIN_LEN));
+
+  const T0 = nowIdx(), n = Math.floor(Math.max(T0 - 1, 0) / PER);
+  const pageRound = R0 + n * PER / PER_ROUND, lastRound = R0 + Math.floor(Math.max(T0 - 1, 0) / PER_ROUND);
+  const complete = Math.min(CHUNKS_PER_PAGE, Math.floor((lastRound - pageRound) / CHUNK_ROUNDS));
+  const got = await Promise.all(Array.from({ length: complete }, (_, c) => chunk(n * CHUNKS_PER_PAGE + c)));
+  let text = '';
+  for (const c of got) { if (c === null) break; text += c; }          // contiguous archived prefix
+  let first = pageRound + text.length / PER_ROUND;
+  const missing = lastRound - first + 1, skip = Math.max(0, missing - GAP_MAX);
+  if (missing > 0) {
+    text += '·'.repeat(skip * PER_ROUND);                               // archive lagging: placeholders
+    const rounds = Array.from({ length: missing - skip }, (_, i) => first + skip + i);
+    text += (await pool(rounds, 24, async r => (await roundLetters(r)) || '·'.repeat(PER_ROUND))).join('');
+  }
+  liveText = text;
+  mountLive(n); oldestDay = n;
+  const upTo = liveText.slice(0, T0 - pageStart), ls = upTo.lastIndexOf(' ');
+  const r = render(upTo.slice(0, ls + 1));
+  doneEl.innerHTML = r.html; addWords(r.hits, false, n);
+  tail = upTo.slice(ls + 1); tailEl.textContent = tail;
+  shown = T0; $('#keys').textContent = shown.toLocaleString(); $('#status').textContent = '';
+  paper.scrollTop = paper.scrollHeight;
+  setInterval(tick, 100); feed(); onScroll();
+}
+
+async function feed() {                 // appends each new round's letters as soon as it is due
+  for (;;) {
+    const rr = Math.floor((Date.now() - GEN) / PERIOD), r = R0 + (pageStart + liveText.length) / PER_ROUND;
+    if (liveText.length >= PER || r > rr + 1) { await sleep(300); continue; }
+    const l = await roundLetters(r);
+    if (l) liveText += l; else await sleep(1500);
+  }
+}
+
+const pawL = $('#pawL'), pawR = $('#pawR'), calm = matchMedia('(prefers-reduced-motion: reduce)');
+function strike(typed) {                // one paw presses per keystroke, alternating; skipped when catching up or hidden
+  if (typed > 2 || document.hidden || calm.matches) return;
+  (shown & 1 ? pawR : pawL).animate(
+    [{ transform: 'translateY(0)' }, { transform: 'translateY(5px)', offset: .35 }, { transform: 'translateY(0)' }],
+    { duration: 180, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' });
+}
+
+function tick() {
+  const target = nowIdx();
+  if (shown >= target) return;
+  if (shown >= pageStart + PER) { doneEl.append(tail); tail = ''; pagesMap.set(liveDay, { raw: liveText, p: doneEl.parentElement }); mountLive(liveDay + 1); liveText = ''; }
+  const end = Math.min(target, pageStart + PER, pageStart + liveText.length);
+  $('#status').textContent = end <= shown ? 'The monkey is napping (waiting for the beacon).' : '';
+  if (end <= shown) return;
+  let chunkText = tail + liveText.slice(shown - pageStart, end - pageStart);
+  const ls = chunkText.lastIndexOf(' ');
+  if (ls >= 0) {
+    const r = render(chunkText.slice(0, ls + 1), shown - tail.length - pageStart);
+    doneEl.insertAdjacentHTML('beforeend', r.html); addWords(r.hits, false, liveDay);
+    chunkText = chunkText.slice(ls + 1);
+  }
+  const typed = end - shown;
+  tail = chunkText; tailEl.textContent = tail; shown = end; strike(typed);
+  $('#keys').textContent = shown.toLocaleString();
+  if (stick) paper.scrollTop = paper.scrollHeight;
+}
+
+let olderP = null;
+function loadOlder() {                  // resolves true if a page was added above
+  if (noOlder || oldestDay <= 0) return Promise.resolve(false);
+  return olderP ??= doLoadOlder().finally(() => { olderP = null; });
+}
+async function doLoadOlder() {
+  const n = oldestDay - 1;
+  const got = await Promise.all(Array.from({ length: CHUNKS_PER_PAGE }, (_, c) => chunk(n * CHUNKS_PER_PAGE + c)));
+  if (got.every(c => c === null)) { noOlder = true; return false; }
+  const t = got.map(c => c ?? '·'.repeat(CHUNK)).join('');
+  const s = section(n), r = render(t, 0), h = paper.scrollHeight, p = s.querySelector('p');
+  p.innerHTML = r.html;
+  pagesMap.set(n, { raw: t, p });
+  paper.prepend(s);
+  paper.scrollTop += paper.scrollHeight - h;
+  addWords(r.hits, true, n);
+  oldestDay = n; onScroll();
+  return true;
+}
+
+function onScroll() {
+  stick = paper.scrollHeight - paper.scrollTop - paper.clientHeight < 40;
+  liveBtn.style.display = stick ? 'none' : 'block';
+  if (paper.scrollTop < 300 || paper.scrollHeight <= paper.clientHeight + 300) loadOlder();
+}
+paper.addEventListener('scroll', onScroll);
+liveBtn.addEventListener('click', () => { paper.scrollTop = paper.scrollHeight; });
+// ---------- finding text, search, hover timeline ----------
+const pageRaw = n => n === liveDay ? liveText : (pagesMap.get(n) || {}).raw;
+const pageEl = n => n === liveDay ? doneEl.parentElement : (pagesMap.get(n) || {}).p;
+const pageLimit = n => n === liveDay ? shown - pageStart : Infinity;   // never look at untyped letters
+
+function rangeIn(p, a, b) {             // DOM range for characters a..b of a page's text
+  const w = document.createTreeWalker(p, NodeFilter.SHOW_TEXT), r = document.createRange();
+  let acc = 0, node, started = false;
+  while ((node = w.nextNode())) {
+    const len = node.length;
+    if (!started && acc + len > a) { r.setStart(node, a - acc); started = true; }
+    if (started && acc + len >= b) { r.setEnd(node, b - acc); return r; }
+    acc += len;
+  }
+  return null;
+}
+function when(n, off) {                 // hours since the monkey started, plus the clock time
+  const i = n * PER + off, hrs = i * STEP / 3.6e6;
+  const t = new Date(GEN + R0 * PERIOD + i * STEP).toISOString().slice(0, 16).replace('T', ' ');
+  return `${hrs.toFixed(2)} hours after the monkey started (${t} UTC)`;
+}
+function jump(n, off, len) {
+  const p = pageEl(n), r = p && rangeIn(p, off, off + len);
+  if (!r) return;
+  if (window.CSS && CSS.highlights) CSS.highlights.set('find', new Highlight(r));
+  else { const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+  const rc = r.getBoundingClientRect(), pr = paper.getBoundingClientRect();
+  paper.scrollTo({ top: paper.scrollTop + rc.top - pr.top - paper.clientHeight / 3 });
+}
+
+let cur = null, lastQ = '';
+async function seek(dir) {              // dir -1: older match, +1: newer match
+  const q = $('#q').value.toLowerCase().replace(/[^a-z ]/g, ''), msg = $('#found');
+  if (q.length < 2) { msg.textContent = 'Type at least 2 letters.'; return; }
+  if (q !== lastQ) { cur = null; lastQ = q; }
+  if (!cur) dir = -1;
+  let n = cur ? cur.n : liveDay, pos = cur ? cur.off : Infinity;
+  msg.textContent = 'Searching…';
+  for (;;) {
+    const raw = pageRaw(n);
+    if (raw != null) {
+      const lim = Math.min(raw.length, pageLimit(n));
+      let i;
+      if (dir < 0) { const from = pos === Infinity ? lim - q.length : pos - 1; i = from < 0 ? -1 : raw.lastIndexOf(q, from); }
+      else i = raw.indexOf(q, pos + 1);
+      if (i >= 0 && i + q.length <= lim) {
+        cur = { n, off: i }; jump(n, i, q.length);
+        msg.textContent = `Match: typed ${when(n, i)}`; return;
+      }
+    }
+    if (dir < 0) { if (n - 1 < oldestDay && (!(await loadOlder()) || n - 1 < oldestDay)) break; n--; pos = Infinity; }
+    else { if (n >= liveDay) break; n++; pos = -1; }
+  }
+  msg.textContent = cur ? 'No more matches in that direction.' : 'Not found in the text so far.';
+}
+$('#search').addEventListener('submit', e => { e.preventDefault(); seek(-1); });
+$('#newer').addEventListener('click', () => seek(1));
+$('#q').addEventListener('input', () => { cur = null; });
+
+const tip = $('#tip');
+function showTip(html, x, y) {
+  tip.innerHTML = html; tip.style.display = 'block';
+  tip.style.left = Math.max(8, Math.min(x + 14, innerWidth - tip.offsetWidth - 8)) + 'px';
+  tip.style.top = (y + 18) + 'px';
+}
+const hideTip = () => { tip.style.display = 'none'; };
+function caretAt(x, y) {
+  if (document.caretPositionFromPoint) { const c = document.caretPositionFromPoint(x, y); return c && { node: c.offsetNode, offset: c.offset }; }
+  if (document.caretRangeFromPoint) { const r = document.caretRangeFromPoint(x, y); return r && { node: r.startContainer, offset: r.startOffset }; }
+  return null;
+}
+function hover(x, y) {                  // tooltip for the run of letters under the cursor
+  const c = caretAt(x, y), nd = c && c.node;
+  const p = nd && nd.nodeType === 3 && nd.parentElement && nd.parentElement.closest('p.text');
+  if (!p) return hideTip();
+  const w = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
+  let acc = 0, node;
+  while ((node = w.nextNode()) && node !== nd) acc += node.length;
+  const n = +p.dataset.n, raw = pageRaw(n);
+  if (raw == null) return hideTip();
+  const lim = Math.min(raw.length, pageLimit(n));
+  let o = acc + c.offset; if (o >= lim) o = lim - 1;
+  if (o < 0 || raw[o] === ' ') return hideTip();
+  const rg = rangeIn(p, o, o + 1), rc = rg && rg.getBoundingClientRect();
+  if (!rc || x < rc.left - 3 || x > rc.right + 3 || y < rc.top - 3 || y > rc.bottom + 3) return hideTip();
+  let a = o, b = o + 1;
+  while (a > 0 && raw[a - 1] !== ' ') a--;
+  while (b < lim && raw[b] !== ' ') b++;
+  showTip(`<b>${raw.slice(a, Math.min(b, a + 40))}</b><br>Typed ${when(n, a)}`, x, y);
+}
+let raf = 0;
+paper.addEventListener('mousemove', e => { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; hover(e.clientX, e.clientY); }); });
+paper.addEventListener('mouseleave', hideTip);
+paper.addEventListener('scroll', hideTip);
+
+wordsEl.addEventListener('click', e => { const b = e.target.closest('button'); if (b) jump(+b.dataset.n, +b.dataset.off, b.textContent.length); });
+wordsEl.addEventListener('mouseover', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const r = b.getBoundingClientRect();
+  showTip(`<b>${b.textContent}</b><br>Typed ${when(+b.dataset.n, +b.dataset.off)}`, r.left, r.bottom - 14);
+});
+wordsEl.addEventListener('mouseout', hideTip);
+
+const aboutDlg = $('#about');
+$('#aboutBtn').addEventListener('click', () => aboutDlg.showModal());
+$('#aboutClose').addEventListener('click', () => aboutDlg.close());
+aboutDlg.addEventListener('click', e => { if (e.target === aboutDlg) aboutDlg.close(); });   // click on the backdrop
+
+init();
+</script>
+</body>
+</html>

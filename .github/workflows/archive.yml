@@ -1,0 +1,23 @@
+name: Archive monkey typing
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: archive
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/archive.mjs
+      - name: Commit new chunks
+        run: |
+          git config user.name "typewriter-bot"
+          git config user.email "typewriter-bot@users.noreply.github.com"
+          git add archive
+          git diff --cached --quiet || (git commit -m "Archive typed letters" && git push)
